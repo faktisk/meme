@@ -56,6 +56,10 @@ $m: '.m-editor';
         }
     }
 
+    label {
+        margin-top: 5px;
+    }
+
     #{$m}__swatch {
         -moz-appearance: none;
         -webkit-appearance: none;

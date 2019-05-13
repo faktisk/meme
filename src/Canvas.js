@@ -186,7 +186,7 @@ export default class Canvas extends React.Component {
         renderWatermark(ctx);
 
         // Enable drag cursor while canvas has artwork:
-        canvas.style.cursor = background.width ? 'move' : 'default';
+        canvas.style.cursor = background.width ? 'grab' : 'default';
     }
 
     download = () => {
@@ -194,10 +194,12 @@ export default class Canvas extends React.Component {
             return;
         }
 
-        const a = document.createElement('a');
-        a.download = this.props.downloadName || 'share.png';
-        a.href = this.node.current.toDataURL();
-        a.click();
+        this.node.current.toBlob(blob => {
+            const a = document.createElement('a');
+            a.download = this.props.downloadName || 'share.png';
+            a.href = URL.createObjectURL(blob);
+            a.click();
+        }, 'image/png');
     };
 
     hasBackground = () => {

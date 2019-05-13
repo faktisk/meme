@@ -1,5 +1,5 @@
 {
-	"headlineText": "Skriv din overskrift",
+    "headlineText": "Skriv din overskrift",
     "watermarkSrc": "static/img/faktisk-black.png",
     "watermarkOpts": [
         {
@@ -7,12 +7,12 @@
             "value": "static/img/faktisk-black.png"
         },
         {
-            "text": "Faktisk, hvit",
-            "value": "static/img/faktisk-white.png"
-		},
-		{
             "text": "Faktisk, hvit med blått punkt",
             "value": "static/img/faktisk-white-blue-dot.png"
+        },
+        {
+            "text": "Faktisk, hvit",
+            "value": "static/img/faktisk-white.png"
         },
         {
             "text": "Faktisk, hvit med svart punkt",
@@ -33,13 +33,55 @@
             "value": "right"
         }
     ],
-	"creditText": "Kilde:",
-	"sizeOpts": [
-		{ "name": "Default", "width": 755, "height": 378 },
-		{ "name": "Facebook", "width": 1200, "height": 628 },
-		{ "name": "Instagram square", "width": 1080, "height": 1080 },
-		{ "name": "Instagram vertical", "width": 1080, "height": 1350 },
-		{ "name": "Twitter", "width": 800, "height": 418 },
-		{ "name": "Stories", "width": 1080, "height": 1920 }
-	]
+    "creditText": "Kilde:",
+    "sizeOpts": [
+        {
+            "name": "Default",
+            "width": 755,
+            "height": 378
+        },
+        {
+            "name": "Facebook",
+            "width": 1200,
+            "height": 628
+        },
+        {
+            "name": "Instagram square",
+            "width": 1080,
+            "height": 1080
+        },
+        {
+            "name": "Instagram vertical",
+            "width": 1080,
+            "height": 1350
+        },
+        {
+            "name": "Twitter",
+            "width": 800,
+            "height": 418
+        },
+        {
+            "name": "Stories",
+            "width": 1080,
+            "height": 1920
+        }
+    ],
+    "overlayColorOpts": [
+        "#000",
+        "#777",
+        "#0461ff",
+        "#02FF86",
+        "#FEE64F",
+        "#ADC0C6",
+        "#FDAA38",
+        "#F84645",
+        "#FF33E1"
+    ],
+    "fontSizeOpts": [
+        { "text": "Small", "value": 14 },
+        { "text": "Medium", "value": 24 },
+        { "text": "Large", "value": 36 },
+        { "text": "Larger", "value": 42 }
+    ]
+
 }
