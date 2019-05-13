@@ -1,0 +1,12 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+// colors
+$default-text-color: #4c4e4d;
+$theme-color: #0461ff;
+
+$default-font-size: 16px;
+$default-line-height: (25px / $default-font-size);
+
+@import './forms.scss';
+@import './editor.scss';
+@import './canvas.scss';
