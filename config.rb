@@ -1,5 +1,7 @@
 # Reload the browser automatically whenever files change
-activate :livereload
+if ENV['RAILS_ENV'] != 'production'
+  activate :livereload
+end
 
 ###
 # Compass
