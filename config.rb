@@ -36,4 +36,5 @@ configure :build do
   activate :asset_hash
   activate :minify_javascript
   activate :minify_css
+  activate :relative_assets
 end
