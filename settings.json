@@ -3,6 +3,10 @@
     "watermarkSrc": "static/img/faktisk-black.png",
     "watermarkOpts": [
         {
+            "text": "Ingen",
+            "value": ""
+        },
+        {
             "text": "Faktisk, svart",
             "value": "static/img/faktisk-black.png"
         },
