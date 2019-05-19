@@ -2,6 +2,7 @@ import Dropzone from 'react-dropzone';
 
 export default ({
     onDrop,
+    onPaste,
     setAttribute,
     imageScale,
     headlineText,

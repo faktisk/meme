@@ -93,6 +93,13 @@ export default class MemeGenerator extends React.Component {
         if (this.state.watermarkSrc) {
             this.state.watermark.src = this.state.watermarkSrc;
         }
+
+        document.addEventListener('paste', this.handlePaste);
+        document.addEventListener('paste', this.handlePaste);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('paste', this.handlePaste);
     }
 
     handleFileDrop = files => {
@@ -104,6 +111,23 @@ export default class MemeGenerator extends React.Component {
         };
 
         reader.readAsDataURL(files[0]);
+    };
+
+    handlePaste = ev => {
+        if (ev.clipboardData && ev.clipboardData.files.length) {
+            const [file] = ev.clipboardData.files;
+
+            if (file.type.indexOf('image/') === 0) {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    this.state.background.src = reader.result;
+                    this.forceUpdate();
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
     };
 
     handleBackgroundPosition = pos => this.setState({ backgroundPosition: pos });
@@ -127,6 +151,7 @@ export default class MemeGenerator extends React.Component {
                     {...model}
                     setAttribute={this.setAttribute}
                     onDrop={this.handleFileDrop}
+                    onPaste={this.handlePaste}
                     setSize={this.setSize}
                 />
                 <Canvas
