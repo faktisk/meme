@@ -247,6 +247,12 @@ export default class CanvasRenderer extends React.Component {
         }
     };
 
+    handleMouseOut = () => {
+        if (this.hasBackground()) {
+            this.setState({ drag: null });
+        }
+    };
+
     handleMouseMove = evt => {
         if (this.state.drag) {
             evt.preventDefault();
@@ -270,6 +276,10 @@ export default class CanvasRenderer extends React.Component {
         }
     };
 
+    handleDoubleClick = evt => {
+        this.props.onBackgroundPosition({ x: 0, y: 0 });
+    };
+
     render() {
         const { width, height } = this.props;
 
@@ -285,6 +295,8 @@ export default class CanvasRenderer extends React.Component {
                         onMouseDown={this.handleMouseDown}
                         onMouseUp={this.handleMouseUp}
                         onMouseMove={this.handleMouseMove}
+                        onMouseOut={this.handleMouseOut}
+                        onDoubleClick={this.handleDoubleClick}
                     />
                 </div>
                 <div className="m-canvas__download">
