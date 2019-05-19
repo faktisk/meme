@@ -1,5 +1,40 @@
 import Dropzone from 'react-dropzone';
 
+const ColorPicker = ({ title, selected, options, setter, allowNone }) => (
+    <div className="m-editor__overlay">
+        <h2>{title}</h2>
+        <ul className="checkbox-group">
+            {allowNone && (
+                <li>
+                    <label>
+                        <input
+                            type="radio"
+                            value=""
+                            onChange={setter}
+                            checked={selected === ''}
+                        />{' '}
+                        None
+                    </label>
+                </li>
+            )}
+            {options.map(c => (
+                <li key={c}>
+                    <label>
+                        <input
+                            className="m-editor__swatch"
+                            style={{ backgroundColor: c }}
+                            type="radio"
+                            checked={c === selected}
+                            onChange={setter}
+                            value={c}
+                        />
+                    </label>
+                </li>
+            ))}
+        </ul>
+    </div>
+);
+
 export default ({
     onDrop,
     onPaste,
@@ -8,6 +43,10 @@ export default ({
     headlineText,
     textAlign,
     textAlignOpts,
+    fontColor,
+    fontColorOpts,
+    backgroundColor,
+    backgroundColorOpts,
     fontSize,
     fontSizeOpts,
     fontFamily,
@@ -68,6 +107,13 @@ export default ({
             type="text"
             value={headlineText}
             onChange={setAttribute('headlineText')}
+        />
+
+        <ColorPicker
+            title="Font color"
+            setter={setAttribute('fontColor')}
+            options={fontColorOpts}
+            selected={fontColor}
         />
 
         <select
@@ -159,6 +205,7 @@ export default ({
         <h2>
             <label htmlFor="credit">Credit</label>
         </h2>
+
         <input
             type="text"
             id="credit"
@@ -166,36 +213,19 @@ export default ({
             onChange={setAttribute('creditText')}
         />
 
-        <div className="m-editor__overlay">
-            <h2>Overlay Color</h2>
-            <ul className="checkbox-group">
-                <li>
-                    <label>
-                        <input
-                            type="radio"
-                            name="overlay"
-                            value=""
-                            onChange={setAttribute('overlayColor')}
-                        />{' '}
-                        None
-                    </label>
-                </li>
-                {overlayColorOpts.map(c => (
-                    <li key={c}>
-                        <label>
-                            <input
-                                className="m-editor__swatch"
-                                style={{ backgroundColor: c }}
-                                type="radio"
-                                name="overlay"
-                                checked={c === overlayColor}
-                                onChange={setAttribute('overlayColor')}
-                                value={c}
-                            />
-                        </label>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <ColorPicker
+            title="Overlay color"
+            setter={setAttribute('overlayColor')}
+            options={overlayColorOpts}
+            selected={overlayColor}
+            allowNone
+        />
+
+        <ColorPicker
+            title="Background color"
+            setter={setAttribute('backgroundColor')}
+            options={backgroundColorOpts}
+            selected={backgroundColor}
+        />
     </form>
 );

@@ -13,7 +13,7 @@ export default class Index extends React.Component {
                     <title>Faktisk meme</title>
                 </Head>
 
-                <MemeGenerator />
+                <MemeGenerator renderTo="canvas" />
             </div>
         );
     }

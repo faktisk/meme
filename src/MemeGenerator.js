@@ -1,5 +1,5 @@
 import Editor from './Editor';
-import Canvas from './Canvas';
+import CanvasRenderer from './CanvasRenderer';
 
 import settings from '../settings.json';
 
@@ -10,6 +10,7 @@ export default class MemeGenerator extends React.Component {
         creditSize: 12,
         downloadName: 'share',
         fontColor: 'white',
+        fontColorOpts: ['white', 'black'],
         fontFamily: 'Helvetica Neue',
         fontFamilyOpts: [
             { text: 'Helvetica Neue', value: 'Helvetica Neue' },
@@ -44,6 +45,8 @@ export default class MemeGenerator extends React.Component {
             { text: 'Center', value: 'center' },
             { text: 'Right', value: 'right' },
         ],
+        backgroundColor: 'white',
+        backgroundColorOpts: ['black', 'white'],
         textShadow: true,
         textShadowEdit: true,
         watermarkAlpha: 1,
@@ -134,6 +137,7 @@ export default class MemeGenerator extends React.Component {
 
     render() {
         const model = this.state;
+        const { renderTo } = this.props;
 
         return (
             <div className="container">
@@ -154,10 +158,20 @@ export default class MemeGenerator extends React.Component {
                     onPaste={this.handlePaste}
                     setSize={this.setSize}
                 />
-                <Canvas
-                    {...model}
-                    onBackgroundPosition={this.handleBackgroundPosition}
-                />
+
+                {renderTo === 'canvas' && (
+                    <CanvasRenderer
+                        {...model}
+                        onBackgroundPosition={this.handleBackgroundPosition}
+                    />
+                )}
+
+                {renderTo === 'svg' && (
+                    <SvgRenderer
+                        {...model}
+                        onBackgroundPosition={this.handleBackgroundPosition}
+                    />
+                )}
             </div>
         );
     }

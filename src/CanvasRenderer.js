@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 
-export default class Canvas extends React.Component {
+export default class CanvasRenderer extends React.Component {
     node = React.createRef();
     state = { drag: false };
 
@@ -26,6 +26,7 @@ export default class Canvas extends React.Component {
             watermarkAlpha,
             imageScale,
             backgroundPosition,
+            backgroundColor,
             overlayColor,
             overlayAlpha,
             fontSize,
@@ -47,6 +48,9 @@ export default class Canvas extends React.Component {
         canvas.height = height;
 
         ctx.clearRect(0, 0, width, height);
+
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, width, height);
 
         function renderBackground(ctx) {
             // Base height and width:
