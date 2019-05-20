@@ -10,6 +10,14 @@ export default class CanvasRenderer extends React.Component {
 
     componentDidMount() {
         this.draw();
+
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
     }
 
     draw() {
@@ -38,6 +46,7 @@ export default class CanvasRenderer extends React.Component {
             headlineText,
             creditSize,
             creditText,
+            headlinePosition,
         } = this.props;
 
         var ctx = canvas.getContext('2d');
@@ -92,8 +101,9 @@ export default class CanvasRenderer extends React.Component {
 
         function renderHeadline(ctx) {
             var maxWidth = Math.round(width * 0.75);
-            var x = padding;
-            var y = padding;
+
+            let x = padding;
+            let y = padding;
 
             ctx.font = `${fontWeight} ${fontSize}pt ${fontFamily}`;
             ctx.fillStyle = fontColor;
@@ -120,24 +130,14 @@ export default class CanvasRenderer extends React.Component {
                 ctx.textAlign = 'left';
             }
 
-            var words = headlineText.split(' ');
-            var line = '';
+            x += headlinePosition.x || 0;
+            y += headlinePosition.y || 0;
 
-            for (var n = 0; n < words.length; n++) {
-                var testLine = line + words[n] + ' ';
-                var metrics = ctx.measureText(testLine);
-                var testWidth = metrics.width;
+            headlineText.split('\n').forEach((line, i) => {
+                ctx.fillText(line, x, y);
+                y += Math.round(fontSize * 1.5);
+            });
 
-                if (testWidth > maxWidth && n > 0) {
-                    ctx.fillText(line, x, y);
-                    line = words[n] + ' ';
-                    y += Math.round(fontSize * 1.5);
-                } else {
-                    line = testLine;
-                }
-            }
-
-            ctx.fillText(line, x, y);
             ctx.shadowColor = 'transparent';
         }
 
@@ -190,7 +190,13 @@ export default class CanvasRenderer extends React.Component {
         renderWatermark(ctx);
 
         // Enable drag cursor while canvas has artwork:
-        canvas.style.cursor = background.width ? 'grab' : 'default';
+        if (this.state.altKey) {
+            canvas.style.cursor = 'move';
+        } else if (this.state.shiftKey) {
+            canvas.style.cursor = 'ns-resize';
+        } else {
+            canvas.style.cursor = background.width ? 'grab' : 'default';
+        }
     }
 
     download = () => {
@@ -206,17 +212,18 @@ export default class CanvasRenderer extends React.Component {
         }, 'image/png');
     };
 
-    hasBackground = () => {
+    canDrag = () => {
         const { width, height } = this.props.background;
-        return width && height;
+        return (width && height) || this.state.altKey;
     };
 
     handleMouseDown = event => {
-        if (this.hasBackground()) {
+        if (this.canDrag()) {
             const {
                 background,
                 imageScale,
                 backgroundPosition,
+                headlinePosition,
                 width,
                 height,
             } = this.props;
@@ -225,10 +232,19 @@ export default class CanvasRenderer extends React.Component {
             const imageHeight = (background.height * imageScale) / 2;
             const origin = { x: event.clientX, y: event.clientY };
 
-            const start = {
-                x: backgroundPosition.x || width / 2,
-                y: backgroundPosition.y || height / 2,
-            };
+            let start;
+
+            if (this.state.altKey) {
+                start = {
+                    x: headlinePosition.x || 0,
+                    y: headlinePosition.y || 0,
+                };
+            } else {
+                start = {
+                    x: backgroundPosition.x || width / 2,
+                    y: backgroundPosition.y || height / 2,
+                };
+            }
 
             this.setState({
                 drag: {
@@ -242,13 +258,13 @@ export default class CanvasRenderer extends React.Component {
     };
 
     handleMouseUp = () => {
-        if (this.hasBackground()) {
+        if (this.canDrag()) {
             this.setState({ drag: null });
         }
     };
 
     handleMouseOut = () => {
-        if (this.hasBackground()) {
+        if (this.canDrag()) {
             this.setState({ drag: null });
         }
     };
@@ -257,27 +273,63 @@ export default class CanvasRenderer extends React.Component {
         if (this.state.drag) {
             evt.preventDefault();
 
-            const { width, height } = this.props;
-
             const {
                 drag: { imageWidth, imageHeight, start, origin },
+                altKey,
+                shiftKey,
             } = this.state;
 
-            this.props.onBackgroundPosition({
-                x: Math.max(
-                    width - imageWidth,
-                    Math.min(start.x - (origin.x - evt.clientX), imageWidth)
-                ),
-                y: Math.max(
-                    height - imageHeight,
-                    Math.min(start.y - (origin.y - evt.clientY), imageHeight)
-                ),
-            });
+            const {
+                width,
+                height,
+                onBackgroundPosition,
+                onHeadlinePosition,
+                onImageScale,
+            } = this.props;
+
+            const {
+                width: actualWidth,
+                height: actualHeight,
+            } = this.node.current.getBoundingClientRect();
+
+            const xRatio = width / actualWidth;
+            const yRatio = height / actualHeight;
+
+            const diffX = (origin.x - evt.clientX) * xRatio;
+            const diffY = (origin.y - evt.clientY) * yRatio;
+
+            if (altKey) {
+                onHeadlinePosition({
+                    x: start.x - diffX,
+                    y: start.y - diffY,
+                });
+            } else if (shiftKey) {
+                onImageScale(diffY / height);
+            } else {
+                onBackgroundPosition({
+                    x: start.x - diffX,
+                    y: start.y - diffY,
+                });
+            }
         }
     };
 
     handleDoubleClick = evt => {
         this.props.onBackgroundPosition({ x: 0, y: 0 });
+    };
+
+    handleKeyDown = evt => {
+        if (evt.key === 'Alt') {
+            this.setState({ altKey: true });
+        } else if (evt.key === 'Shift') {
+            this.setState({ shiftKey: true });
+        }
+    };
+
+    handleKeyUp = evt => {
+        if (this.state.altKey || this.state.shiftKey) {
+            this.setState({ altKey: false, shiftKey: false });
+        }
     };
 
     render() {
@@ -295,10 +347,11 @@ export default class CanvasRenderer extends React.Component {
                         onMouseDown={this.handleMouseDown}
                         onMouseUp={this.handleMouseUp}
                         onMouseMove={this.handleMouseMove}
-                        onMouseOut={this.handleMouseOut}
+                        // onMouseOut={this.handleMouseOut}
                         onDoubleClick={this.handleDoubleClick}
                     />
                 </div>
+
                 <div className="m-canvas__download">
                     <div onClick={this.download}>Download Image</div>
                 </div>

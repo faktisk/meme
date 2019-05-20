@@ -9,6 +9,8 @@ $default-line-height: (25px / $default-font-size);
 
 body {
     background-color: #f7f7f7;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
 }
 
 @import './forms.scss';

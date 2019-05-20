@@ -40,14 +40,19 @@
     "creditText": "Kilde:",
     "sizeOpts": [
         {
-            "name": "Default",
-            "width": 755,
-            "height": 378
-        },
-        {
-            "name": "Facebook",
+            "name": "Facebook share",
             "width": 1200,
             "height": 628
+        },
+        {
+            "name": "Facebook cover",
+            "width": 820,
+            "height": 312
+        },
+        {
+            "name": "Facebook event",
+            "width": 1920,
+            "height": 1080
         },
         {
             "name": "Instagram square",
@@ -55,19 +60,19 @@
             "height": 1080
         },
         {
-            "name": "Instagram vertical",
+            "name": "Instagram stories",
             "width": 1080,
-            "height": 1350
+            "height": 1920
         },
         {
-            "name": "Twitter",
+            "name": "Twitter share",
             "width": 800,
             "height": 418
         },
         {
-            "name": "Stories",
-            "width": 1080,
-            "height": 1920
+            "name": "Twitter header",
+            "width": 1500,
+            "height": 500
         }
     ],
     "overlayColorOpts": [
@@ -85,7 +90,9 @@
         { "text": "Small", "value": 14 },
         { "text": "Medium", "value": 24 },
         { "text": "Large", "value": 36 },
-        { "text": "Larger", "value": 42 }
-    ]
+        { "text": "Larger", "value": 54 }
+    ],
+    "fontWeight": 600
+
 
 }

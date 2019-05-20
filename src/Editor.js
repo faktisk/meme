@@ -1,39 +1,15 @@
 import Dropzone from 'react-dropzone';
+import ColorPicker from './ColorPicker';
 
-const ColorPicker = ({ title, selected, options, setter, allowNone }) => (
-    <div className="m-editor__overlay">
-        <h2>{title}</h2>
-        <ul className="checkbox-group">
-            {allowNone && (
-                <li>
-                    <label>
-                        <input
-                            type="radio"
-                            value=""
-                            onChange={setter}
-                            checked={selected === ''}
-                        />{' '}
-                        None
-                    </label>
-                </li>
-            )}
-            {options.map(c => (
-                <li key={c}>
-                    <label>
-                        <input
-                            className="m-editor__swatch"
-                            style={{ backgroundColor: c }}
-                            type="radio"
-                            checked={c === selected}
-                            onChange={setter}
-                            value={c}
-                        />
-                    </label>
-                </li>
-            ))}
-        </ul>
-    </div>
-);
+function gcd(a, b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+function aspectFor({ width, height }) {
+    const r = gcd(width, height);
+
+    return `${width / r}:${height / r}`;
+}
 
 export default ({
     onDrop,
@@ -87,12 +63,13 @@ export default ({
         />
 
         <select
-            className="form-control form-control-sm"
+            className="form-control form-control-sm text-monospace"
+            style={{ fontSize: '12px' }}
             value={size}
             onChange={setAttribute('size')}>
             {sizeOpts.map(o => (
                 <option value={o.name} key={o.name}>
-                    {o.name}: {o.width}x{o.height}
+                    {aspectFor(o)} &middot; {o.name} &middot; {o.width}x{o.height}
                 </option>
             ))}
         </select>
@@ -131,20 +108,23 @@ export default ({
             ))}
         </select>
 
-        <select
-            className="form-control form-control-sm"
-            value={fontSize}
-            onChange={setAttribute('fontSize')}>
-            <option value="" disabled>
-                Select a font size
-            </option>
+        <label htmlFor="font-size">Font size</label>
 
-            {fontSizeOpts.map(o => (
-                <option value={o.value} key={o.value}>
-                    {o.text}
-                </option>
+        <input
+            id="font-size"
+            type="range"
+            max="128"
+            min="12"
+            step="1"
+            list="fontSizes"
+            value={fontSize}
+            onChange={setAttribute('fontSize')}
+        />
+        <datalist id="fontSizes">
+            {fontSizeOpts.map(e => (
+                <option key={e.value}>{e.value}</option>
             ))}
-        </select>
+        </datalist>
 
         <select
             className="form-control form-control-sm"

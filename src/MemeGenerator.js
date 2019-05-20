@@ -3,9 +3,26 @@ import CanvasRenderer from './CanvasRenderer';
 
 import settings from '../settings.json';
 
+const scale = function(opts) {
+    var istart = opts.domain[0],
+        istop = opts.domain[1],
+        ostart = opts.range[0],
+        ostop = opts.range[1];
+
+    return function scale(value) {
+        return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+    };
+};
+
+const imageScale = scale({
+    range: [0.01, 4],
+    domain: [0, 1],
+});
+
 export default class MemeGenerator extends React.Component {
     state = {
         backgroundPosition: { x: null, y: null },
+        headlinePosition: { x: null, y: null },
         creditText: 'Source:',
         creditSize: 12,
         downloadName: 'share',
@@ -86,6 +103,10 @@ export default class MemeGenerator extends React.Component {
             }
         }
 
+        if (attr == 'textAlign') {
+            newState.headlinePosition = {};
+        }
+
         this.setState(newState);
     };
 
@@ -134,15 +155,19 @@ export default class MemeGenerator extends React.Component {
     };
 
     handleBackgroundPosition = pos => this.setState({ backgroundPosition: pos });
+    handleHeadlinePosition = pos => this.setState({ headlinePosition: pos });
+    handleImageScale = change => {
+        this.setState({ imageScale: imageScale(Math.abs(change)) });
+    };
 
     render() {
         const model = this.state;
         const { renderTo } = this.props;
 
         return (
-            <div className="container">
-                <div>
-                    <h1 className="my-4">
+            <div>
+                <div className="container">
+                    <h1 className="my-3">
                         <img
                             src="static/img/faktisk-black.svg"
                             alt="Faktisk logo"
@@ -150,28 +175,43 @@ export default class MemeGenerator extends React.Component {
                         />
                     </h1>
                 </div>
-
-                <Editor
-                    {...model}
-                    setAttribute={this.setAttribute}
-                    onDrop={this.handleFileDrop}
-                    onPaste={this.handlePaste}
-                    setSize={this.setSize}
-                />
-
-                {renderTo === 'canvas' && (
-                    <CanvasRenderer
+                <div className="container">
+                    <Editor
                         {...model}
-                        onBackgroundPosition={this.handleBackgroundPosition}
+                        setAttribute={this.setAttribute}
+                        onDrop={this.handleFileDrop}
+                        onPaste={this.handlePaste}
+                        setSize={this.setSize}
                     />
-                )}
 
-                {renderTo === 'svg' && (
-                    <SvgRenderer
-                        {...model}
-                        onBackgroundPosition={this.handleBackgroundPosition}
-                    />
-                )}
+                    {renderTo === 'canvas' && (
+                        <CanvasRenderer
+                            {...model}
+                            onBackgroundPosition={this.handleBackgroundPosition}
+                            onHeadlinePosition={this.handleHeadlinePosition}
+                            onImageScale={this.handleImageScale}
+                        />
+                    )}
+
+                    <div className="my-4 text-muted">
+                        <small>
+                            <strong>Bilde</strong>
+                            <div>
+                                Legges til ved å lime inn fra utklippstavla eller
+                                bruke boksen øverst til høyre. Klikk og dra for å
+                                plassere. Klikk og dra med shift-tasten inne for å
+                                skalere. Dobbeltklikk for å sentrere.
+                            </div>
+
+                            <strong>Tekst</strong>
+                            <div>
+                                Klikk og dra med alt-tasten inne for å plassere
+                                overskriften fritt. Kan nullstilles ved hjelp av
+                                plasseringsvalget til høyre.
+                            </div>
+                        </small>
+                    </div>
+                </div>
             </div>
         );
     }
